@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PIXI.js</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+</head>
+<body>
+<h1>Vanilla Canvas</h1>
+<canvas id="canvas" width="1024" height="768"></canvas>
+<script type="text/javascript">
+    var canvas = document.getElementById("canvas");
+    var width = canvas.width;
+    var height = canvas.height;
+    var ctx = canvas.getContext("2d");
+    let objs = [];
+    let size = 20;
+    for (var i = 0; i < 1000; ++i) {
+        var col = "#" + (Math.round(0xFFFFFF * Math.random())).toString(16);
+        objs.push({col: col,
+                   x: Math.random() * width,
+                   y: Math.random() * height,
+                   width: size,
+                   height: size,
+                   dirX: 1,
+                   dirY: 1,
+                   speed: 10 * Math.random()});
+    }
+
+    function drawLoop() {
+        requestAnimationFrame(drawLoop);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (var i = 0; i < objs.length; i++) {
+          var obj = objs[i];
+          ctx.fillStyle = obj.col;
+          ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+          if (obj.x <= 0) {
+              obj.dirX = 1;
+          } else if (obj.x + size >= width) {
+              obj.dirX = -1;
+          }
+          if (obj.y <= 0) {
+              obj.dirY = 1;
+          } else if (obj.y + size >= height) {
+              obj.dirY = -1;
+          }
+          obj.x += obj.speed * obj.dirX;
+          obj.y += obj.speed * obj.dirY;
+        }
+    }
+    requestAnimationFrame(drawLoop);
+</script>
+</body>
+</html>
