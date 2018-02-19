@@ -27,13 +27,29 @@
                    speed: 10 * Math.random()});
     }
 
+    function drawPolygon(ctx, obj) {
+      ctx.fillStyle = obj.col;
+      ctx.beginPath();
+      var x = obj.x, y = obj.y;
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + size, y);
+      ctx.lineTo(x + size/2, y - size);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawRect(ctx, obj) {
+      ctx.fillStyle = obj.col;
+      ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+    }
+
     function drawLoop() {
         requestAnimationFrame(drawLoop);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (var i = 0; i < objs.length; i++) {
           var obj = objs[i];
-          ctx.fillStyle = obj.col;
-          ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+          // drawPolygon(ctx, obj);
+          drawRect(ctx, obj);
           if (obj.x <= 0) {
               obj.dirX = 1;
           } else if (obj.x + size >= width) {
