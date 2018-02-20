@@ -5,34 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
 </head>
-
-<style type="text/css">
-    .node {
-        fill: white;
-        stroke-width: 4px;
-        stroke: red;
-    }
-
-    .edge {
-        stroke: black;
-        stroke-width: 1px;
-        fill: none;
-    }
-
-    .origin {
-        stroke: gray;
-        stroke-width: 1px;
-    }
-
-    .box {
-        fill: palegreen;
-    }
-</style>
 <body>
 <h1>Lecker SVG</h1>
 
 
 <svg width="1024" height="768">
+    <style type="text/css">
+        .node {
+            fill: white;
+            stroke-width: 4px;
+            stroke: red;
+        }
+
+        .edge {
+            stroke: black;
+            stroke-width: 1px;
+            fill: none;
+        }
+
+        .origin {
+            stroke: gray;
+            stroke-width: 1px;
+        }
+
+        .box {
+            fill: palegreen;
+        }
+    </style>
     <g transform="translate(30, 30)">
         <path d="M -10 0 L 10 0 M 0 -10 L 0 10" class="origin"/>
         <g transform="rotate(30, 50, 50)">
