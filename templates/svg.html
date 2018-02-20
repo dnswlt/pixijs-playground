@@ -8,6 +8,14 @@
 <body>
 <h1>Lecker SVG</h1>
 
+<script type="text/javascript">
+    function addDiv() {
+        var div = document.getElementById("messages");
+        div.innerHTML = "You clicked me at " + new Date();
+        var gAll = document.getElementById("g-all");
+        gAll.setAttribute("transform", "translate(" + Math.random() * 100 + ", " + Math.random() * 100 + ")");
+    }
+</script>
 
 <svg width="1024" height="768">
     <style type="text/css">
@@ -32,7 +40,7 @@
             fill: palegreen;
         }
     </style>
-    <g transform="translate(30, 30)">
+    <g transform="translate(30, 30)" id="g-all">
         <path d="M -10 0 L 10 0 M 0 -10 L 0 10" class="origin"/>
         <g transform="rotate(30, 50, 50)">
             <line x1="50" y1="50" x2="200" y2="50" class="edge"/>
@@ -53,9 +61,10 @@
         </g>
     </g>
     <g transform="translate(650, 140) scale(0.5) translate(-650, -140)">
-        <rect x="600" y="100" width="100" height="80" class="box"/>
+        <rect x="600" y="100" width="100" height="80" class="box" onclick="addDiv()"/>
     </g>
 </svg>
 
+<div id="messages"></div>
 </body>
 </html>
