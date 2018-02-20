@@ -6,37 +6,42 @@
     <meta charset="utf-8">
 </head>
 <body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.0/pixi.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.0/pixi.js"></script>
 <h1>PIXI.js</h1>
 <script type="text/javascript">
-    PIXI.utils.sayHello("canvas");
     let width = 1024;
     let height = 768;
-    let app = new PIXI.Application({width: width, height: height, forceCanvas: false});
+    let app = new PIXI.Application({width: width, height: height, forceCanvas: {{ forceCanvas }} });
     document.body.appendChild(app.view);
 
     let objs = [];
     let size = 20;
     for (var i = 0; i < 1000; ++i) {
-        let rect = new PIXI.Graphics();
-        rect.on('click', function (e) {
+        let g = new PIXI.Graphics();
+        g.on('click', function (e) {
             console.log("Clicked that rect!");
         });
-        app.stage.addChild(rect);
-        rect.beginFill(0xFFFFFF * Math.random());
-        // rect.lineStyle(1, 0x000000, 1);
-        rect.drawRect(0, 0, size, size);
-        // rect.drawPolygon(new PIXI.Polygon(size / 2, 0, size, size, 0, size));
-        rect.position.x = Math.random() * width;
-        rect.position.y = Math.random() * height;
-        rect.endFill();
-        rect.interactive = true;
-        // rect.hitArea = rect.getLocalBounds();
-        objs.push({dirX: 1, dirY: 1, rect: rect, speed: Math.random() * 8});
+        app.stage.addChild(g);
+        g.beginFill(0xFFFFFF * Math.random());
+        if ({{ lineStyle }}) {
+            g.lineStyle(1, 0x000000, 1);
+        }
+        if ({{ rect }}) {
+            g.drawRect(0, 0, size, size);
+        } else {
+            g.drawPolygon(new PIXI.Polygon(size / 2, 0, size, size, 0, size));
+        }
+        g.position.x = Math.random() * width;
+        g.position.y = Math.random() * height;
+        g.endFill();
+        objs.push({dirX: 1, dirY: 1, rect: g, speed: Math.random() * 8});
     }
 
     function drawLoop() {
         requestAnimationFrame(drawLoop);
+        if ({{ static }}) {
+            return;
+        }
         for (var i = 0; i < objs.length; ++i) {
             let o = objs[i];
             if (o.rect.position.x <= 0) {

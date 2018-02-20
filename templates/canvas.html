@@ -43,13 +43,31 @@
       ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
     }
 
+    function drawGraphic(ctx, obj) {
+        if ({{ rect }}) {
+            drawRect(ctx, obj);
+        } else {
+            drawPolygon(ctx, obj);
+        }
+    }
+
+    function drawGraphics(ctx, objs) {
+        for (var i = 0; i < objs.length; ++i) {
+            drawGraphic(ctx, objs[i]);
+        }
+    }
+
+    drawGraphics(ctx, objs);
+
     function drawLoop() {
         requestAnimationFrame(drawLoop);
+        if ({{ static }}) {
+            return;
+        }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (var i = 0; i < objs.length; i++) {
           var obj = objs[i];
-          // drawPolygon(ctx, obj);
-          drawRect(ctx, obj);
+          drawGraphic(ctx, obj);
           if (obj.x <= 0) {
               obj.dirX = 1;
           } else if (obj.x + size >= width) {
