@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SVG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+</head>
+
+<style type="text/css">
+    .node {
+        fill: white;
+        stroke-width: 4px;
+        stroke: red;
+    }
+
+    .edge {
+        stroke: black;
+        stroke-width: 1px;
+        fill: none;
+    }
+
+    .origin {
+        stroke: gray;
+        stroke-width: 1px;
+    }
+
+    .box {
+        fill: palegreen;
+    }
+</style>
+<body>
+<h1>Lecker SVG</h1>
+
+
+<svg width="1024" height="768">
+    <g transform="translate(30, 30)">
+        <path d="M -10 0 L 10 0 M 0 -10 L 0 10" class="origin"/>
+        <g transform="rotate(30, 50, 50)">
+            <line x1="50" y1="50" x2="200" y2="50" class="edge"/>
+            <circle r="10" cx="200" cy="50" class="node"/>
+        </g>
+        <g transform="rotate(60, 50, 50)">
+            <line x1="50" y1="50" x2="200" y2="50" class="edge"/>
+            <circle r="10" cx="200" cy="50" class="node"/>
+        </g>
+        <g transform="rotate(90, 50, 50)">
+            <line x1="50" y1="50" x2="200" y2="50" class="edge"/>
+            <circle r="10" cx="200" cy="50" class="node"/>
+        </g>
+        <circle r="10" cx="50" cy="50" class="node" />
+
+        <g transform="translate(300, 0)">
+            <polyline points="50,0 100,50 50,100 100,150" class="edge" />
+        </g>
+    </g>
+    <g transform="translate(650, 140) scale(0.5) translate(-650, -140)">
+        <rect x="600" y="100" width="100" height="80" class="box"/>
+    </g>
+</svg>
+
+</body>
+</html>
