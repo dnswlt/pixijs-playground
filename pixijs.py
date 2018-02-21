@@ -28,5 +28,15 @@ def pixi():
     }
     return render_template('pixi.html', **ctx)
 
+
+@app.route('/svg')
+def svg():
+    ctx = {
+        'lineStyle': request.args.get('lineStyle') or 0,
+        'rect': request.args.get('rect') or 0,
+        'static': request.args.get('static') or 0
+    }
+    return render_template('svgdyn.html', **ctx)
+
 if __name__ == '__main__':
     app.run(debug=True)
