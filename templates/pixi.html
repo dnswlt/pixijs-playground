@@ -116,23 +116,22 @@
                 requestAnimationFrame(drawLoop);
             }, started + loopCount * 1000/fps - renderTime);
         }
-        if (!moveShapes && !recreated) {
-            return;
-        }
-        for (var i = 0; i < objs.length; ++i) {
-            let o = objs[i];
-            if (o.g.position.x <= 0) {
-                o.dirX = 1;
-            } else if (o.g.position.x + size >= width) {
-                o.dirX = -1;
+        if (moveShapes) {
+            for (var i = 0; i < objs.length; ++i) {
+                let o = objs[i];
+                if (o.g.position.x <= 0) {
+                    o.dirX = 1;
+                } else if (o.g.position.x + size >= width) {
+                    o.dirX = -1;
+                }
+                if (o.g.position.y <= 0) {
+                    o.dirY = 1;
+                } else if (o.g.position.y + size >= height) {
+                    o.dirY = -1;
+                }
+                o.g.position.x += o.speed * o.dirX;
+                o.g.position.y += o.speed * o.dirY;
             }
-            if (o.g.position.y <= 0) {
-                o.dirY = 1;
-            } else if (o.g.position.y + size >= height) {
-                o.dirY = -1;
-            }
-            o.g.position.x += o.speed * o.dirX;
-            o.g.position.y += o.speed * o.dirY;
         }
         app.renderer.render(app.stage);
         recreated = false;

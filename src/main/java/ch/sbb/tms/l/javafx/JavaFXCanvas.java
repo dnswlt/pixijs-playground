@@ -1,13 +1,14 @@
 package ch.sbb.tms.l.javafx;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.util.function.Function;
@@ -25,16 +26,14 @@ public class JavaFXCanvas extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Drawing Operations Test");
 		Group root = new Group();
-		NodeState[] nodes = createNodes(NUM_NODES);
+		NodeState[] nodes = createRects(NUM_NODES);
 		root.getChildren().addAll(tf(nodes, ns -> ns.node));
-        Label label = new Label();
-        Scene rootScene = new Scene(new VBox(label, root), 1024, 768);
+        Scene rootScene = new Scene(root, 1024, 768);
         primaryStage.setScene(rootScene);
 		primaryStage.show();
-		new ThrottledAnimationTimer(20.0) {
+		new AnimationTimer() {
             @Override
-            public void handleThrottled(long now, double frameRate) {
-                label.setText(String.format("Current frame rate: %.3f", frameRate));
+            public void handle(long now) {
                 for (int i = 0; i < nodes.length; i++) {
                     NodeState n = nodes[i];
                     double nx = n.node.getTranslateX() + n.speed * n.dirX;
@@ -47,6 +46,7 @@ public class JavaFXCanvas extends Application {
                     }
                     n.node.setTranslateX(nx);
                     n.node.setTranslateY(ny);
+//                    n.node.setRotate(n.node.getRotate() + 1);
                 }
             }
         }.start();
@@ -65,7 +65,7 @@ public class JavaFXCanvas extends Application {
         return Math.random();
     }
 
-    private NodeState[] createNodes(int num) {
+    private NodeState[] createTriangles(int num) {
         NodeState[] nodes = new NodeState[num];
 	    for (int i = 0; i < num; i++) {
             Polygon p = new Polygon();
@@ -75,7 +75,35 @@ public class JavaFXCanvas extends Application {
                     10.0, 20.0
             });
             p.setFill(new Color(rnd(), rnd(), rnd(), 1));
+            p.setRotate(rnd() * 360);
             nodes[i] = new NodeState(p, 10 * rnd(), rnd(), rnd());
+        }
+        return nodes;
+    }
+
+    private NodeState[] createLines(int num) {
+        NodeState[] nodes = new NodeState[num];
+        for (int i = 0; i < num; i++) {
+            Polyline l = new Polyline();
+            l.getPoints().addAll(new Double[] {
+                    0.0, 0.0,
+                    -10.0, 20.0,
+                    10.0, 20.0
+            });
+            l.setStroke(new Color(rnd(), rnd(), rnd(), 1));
+            l.setRotate(rnd() * 360);
+            l.setStrokeWidth(3);
+            nodes[i] = new NodeState(l, 10 * rnd(), rnd(), rnd());
+        }
+        return nodes;
+    }
+
+    private NodeState[] createRects(int num) {
+        NodeState[] nodes = new NodeState[num];
+        for (int i = 0; i < num; i++) {
+            Rectangle r = new Rectangle(20, 20, new Color(rnd(), rnd(), rnd(), 1));
+            r.setRotate(rnd() * 360);
+            nodes[i] = new NodeState(r, 10 * rnd(), rnd(), rnd());
         }
         return nodes;
     }
