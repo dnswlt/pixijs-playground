@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SVG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+</head>
+<body>
+<h1>Lecker SVG</h1>
+<svg width="1024" height="768" id="svg">
+    <style type="text/css">
+        .node {
+            fill: white;
+            stroke-width: 4px;
+            stroke: red;
+        }
+
+        .edge {
+            stroke: black;
+            stroke-width: 1px;
+            fill: none;
+        }
+
+        .origin {
+            stroke: gray;
+            stroke-width: 1px;
+        }
+
+        .box {
+            fill: palegreen;
+        }
+    </style>
+    <g id="toplevel"></g>
+</svg>
+
+<script type="text/javascript">
+
+    function createCircle(r, cx, cy, fill) {
+      var elem = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      elem.setAttribute("r", r);
+      elem.setAttribute("cx", cx);
+      elem.setAttribute("cy", cy);
+      elem.setAttribute("fill", fill);
+      return elem;
+    }
+
+    function createRect(r, x, y, fill) {
+      var elem = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      elem.setAttribute("height", r);
+      elem.setAttribute("width", r);
+      elem.setAttribute("x", x);
+      elem.setAttribute("y", y);
+      elem.setAttribute("fill", fill);
+      return elem;
+    }
+
+    var svg = document.getElementById("svg");
+    var g = document.getElementById("toplevel");
+    var width = svg.getBoundingClientRect().width;
+    var height = svg.getBoundingClientRect().height;
+    let objs = [];
+    let size = 20;
+    for (var i = 0; i < 1000; ++i) {
+        var fill = "#" + (Math.round(0xFFFFFF * Math.random())).toString(16);
+        // var elem = createCircle(size/2, Math.random() * width, Math.random() * height, fill);
+        var elem = createRect(size/2, Math.random() * width, Math.random() * height, fill);
+        objs.push({elem: elem,
+                   dirX: 1,
+                   dirY: 1,
+                   speed: 10 * Math.random()});
+        g.appendChild(elem);
+    }
+
+    function drawLoop() {
+        requestAnimationFrame(drawLoop);
+        for (var i = 0; i < objs.length; i++) {
+          // var i = Math.floor(Math.random() * objs.length);
+          var obj = objs[i];
+          var elem = obj.elem;
+          var cx = Number(elem.getAttribute("x"));
+          var cy = Number(elem.getAttribute("y"));
+          if (cx <= 0) {
+              obj.dirX = 1;
+          } else if (cx + size >= width) {
+              obj.dirX = -1;
+          }
+          if (cy <= 0) {
+              obj.dirY = 1;
+          } else if (cy + size >= height) {
+              obj.dirY = -1;
+          }
+          elem.setAttribute("x", Math.round(cx + obj.speed * obj.dirX));
+          elem.setAttribute("y", Math.round(cy + obj.speed * obj.dirY));
+        }
+    }
+    requestAnimationFrame(drawLoop);
+</script>
+
+</body>
+</html>
