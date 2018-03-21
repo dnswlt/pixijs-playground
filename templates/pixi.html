@@ -8,56 +8,134 @@
 <body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.0/pixi.js"></script>
 <h1>PIXI.js</h1>
+<div>
+    <button onclick="toggleLineStyle()">lineStyle</button>
+    <button onclick="toggleShape()">shape</button>
+    <button onclick="toggleMoveShapes()">move shapes</button>
+</div>
 <script type="text/javascript">
     let width = 1024;
     let height = 768;
-    let app = new PIXI.Application({width: width, height: height, forceCanvas: {{ forceCanvas }} });
+    let lineStyle = false;
+    let shape = "rect";
+    let moveShapes = true;
+    let app = new PIXI.Application({width: width, height: height, forceCanvas: false, autoStart: false});
+    app.stage.interactive = true;
+    var tickCount = 0;
+    var lastTime = performance.now();
+    PIXI.ticker.shared.add(function() {
+        tickCount++;
+        let now = performance.now();
+        if (now > lastTime + 1000) {
+            console.log("shared ticker", tickCount);
+            tickCount = 0;
+            lastTime = now;
+        }
+    });
+    var recreated = false;
     document.body.appendChild(app.view);
+    const size = 20;
 
-    let objs = [];
-    let size = 20;
-    for (var i = 0; i < 1000; ++i) {
-        let g = new PIXI.Graphics();
-        g.on('click', function (e) {
-            console.log("Clicked that rect!");
-        });
-        app.stage.addChild(g);
-        g.beginFill(0xFFFFFF * Math.random());
-        if ({{ lineStyle }}) {
-            g.lineStyle(1, 0x000000, 1);
+    let callsPerSec = 0;
+    let time = Date.now();
+
+    function createShapes() {
+        let objs = [];
+        for (var i = 0; i < 1000; ++i) {
+            let g = new PIXI.Graphics();
+            g.interactive = true;
+            g.on('click', function (e) {
+                console.log("Clicked that shape!");
+            });
+
+            g.beginFill(0xFFFFFF * Math.random());
+            if (lineStyle) {
+                g.lineStyle(1, 0x000000, 1);
+            }
+            if (shape === "rect") {
+                g.drawRect(0, 0, size, size);
+            } else if (shape === "polygon") {
+                g.drawPolygon(new PIXI.Polygon(size / 2, 0, size, size, 0, size));
+            } else if (shape === "line") {
+                g.lineStyle(2, 0xFFFFFF * Math.random(), 1);
+                g.moveTo(0, 0);
+                let phi = Math.random() * Math.PI/2;
+                g.lineTo(Math.cos(phi) * size, Math.sin(phi) * size);
+            }
+            g.position.x = Math.random() * width;
+            g.position.y = Math.random() * height;
+            g.endFill();
+            objs.push({dirX: 1, dirY: 1, g: g, speed: Math.random() * 8});
         }
-        if ({{ rect }}) {
-            g.drawRect(0, 0, size, size);
-        } else {
-            g.drawPolygon(new PIXI.Polygon(size / 2, 0, size, size, 0, size));
-        }
-        g.position.x = Math.random() * width;
-        g.position.y = Math.random() * height;
-        g.endFill();
-        objs.push({dirX: 1, dirY: 1, rect: g, speed: Math.random() * 8});
+        return objs;
     }
 
-    function drawLoop() {
-        requestAnimationFrame(drawLoop);
-        if ({{ static }}) {
+    var objs = [];
+    function recreateShapes() {
+        app.stage.removeChildren();
+        objs = createShapes();
+        objs.forEach(function (s) {
+            app.stage.addChild(s.g);
+        });
+        recreated = true;
+    }
+
+    recreateShapes();
+
+    function toggleLineStyle() {
+        lineStyle = !lineStyle;
+        recreateShapes();
+    }
+
+    function toggleShape() {
+        switch (shape) {
+            case "rect": shape = "polygon"; break;
+            case "polygon": shape = "line"; break;
+            case "line": shape = "rect"; break;
+        }
+        recreateShapes();
+    }
+
+    function toggleMoveShapes() {
+        moveShapes = !moveShapes;
+    }
+
+    let started = performance.now();
+    let loopCount = 0;
+    function drawLoop(renderTime) {
+        loopCount++;
+        const fps = 20;
+        renderTime = performance.now();
+//        let delta = renderTime - lastRendered - 1000/fps;
+        // Example 1: timeSpent = 60ms, delta = 10ms
+        // Example 2: timeSpent = 40ms, delta = -10ms
+        if (started + loopCount * 1000/fps < renderTime) {
+            requestAnimationFrame(drawLoop);
+        } else {
+            setTimeout(function () {
+                requestAnimationFrame(drawLoop);
+            }, started + loopCount * 1000/fps - renderTime);
+        }
+        if (!moveShapes && !recreated) {
             return;
         }
         for (var i = 0; i < objs.length; ++i) {
             let o = objs[i];
-            if (o.rect.position.x <= 0) {
+            if (o.g.position.x <= 0) {
                 o.dirX = 1;
-            } else if (o.rect.position.x + size >= width) {
+            } else if (o.g.position.x + size >= width) {
                 o.dirX = -1;
             }
-            if (o.rect.position.y <= 0) {
+            if (o.g.position.y <= 0) {
                 o.dirY = 1;
-            } else if (o.rect.position.y + size >= height) {
+            } else if (o.g.position.y + size >= height) {
                 o.dirY = -1;
             }
-            o.rect.position.x += o.speed * o.dirX;
-            o.rect.position.y += o.speed * o.dirY;
+            o.g.position.x += o.speed * o.dirX;
+            o.g.position.y += o.speed * o.dirY;
         }
         app.renderer.render(app.stage);
+        recreated = false;
     }
     requestAnimationFrame(drawLoop);
 </script>
