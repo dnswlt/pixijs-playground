@@ -19,7 +19,7 @@
     let lineStyle = false;
     let shape = "rect";
     let moveShapes = true;
-    let app = new PIXI.Application({width: width, height: height, forceCanvas: false, autoStart: false});
+    let app = new PIXI.Application({width: width, height: height, forceCanvas: false, autoStart: true});
     app.stage.interactive = true;
     var tickCount = 0;
     var recreated = false;
@@ -94,18 +94,11 @@
 
     let started = performance.now();
     let loopCount = 0;
-    const moveRatio = 0.1;
+    const moveRatio = 1;
     function drawLoop(renderTime) {
         loopCount++;
         const fps = 20;
         // renderTime = performance.now();
-        if (started + loopCount * 1000/fps < renderTime) {
-            requestAnimationFrame(drawLoop);
-        } else {
-            setTimeout(function () {
-                requestAnimationFrame(drawLoop);
-            }, started + loopCount * 1000/fps - renderTime);
-        }
         if (moveShapes || recreated) {
             for (var i = 0; i < objs.length; ++i) {
                 if (Math.random() > moveRatio) {
@@ -129,7 +122,7 @@
             recreated = false;
         }
     }
-    requestAnimationFrame(drawLoop);
+    PIXI.ticker.shared.add(drawLoop);
 </script>
 </body>
 </html>
